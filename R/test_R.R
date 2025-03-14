@@ -100,6 +100,8 @@ n_positive <- binomial(size = n_tested, prob = p_resist)
 
 
 # observed_frequency <- n_positive / n_tested
+sim<- calculate(p_resist, nsim=1)
+
 
 sims <- calculate(gammax, p_resist,
                   n_positive,
@@ -115,10 +117,30 @@ plot(sims$p_resist[1, , 1],
 points(sims$observed_frequency,
        pch = 16)
 
-# simulation by asigning allele frequencies based on the time point
-# rbinom must be inside and always inside a function like mutate, filter or group_by
+
+### Sylviane has to determine the phenotype proportion by using the allele frequency
+
+# to calculate the phenotype, we will use the equilibrum Hardy-Weinberg equilibrium
+# Probability of an allele to occur
+phenotype <- zeros(time_series)
+ph_initial <- uniform(0,1)
+# phenotype <- as_data(rep(0, 10))
+phenotype [1] <- ph_initial
+for (t in 1:(time_series-1)) {
+  phenotype_resistant[t + 1] <- (p_resist[t] ^ 2) + (2 * p_susc[t] * p_resist[t])
+  
+}
+
+# simulate genotypic allele frequency data
+n_tested <- rep(100, time_series)
+n_positive <- binomial(size = n_tested, prob = phenotype_resistant)
 
 
-### Sylviane has to determine the phenotype proportion by using the model
+# observed_frequency <- n_positive / n_tested
 
-
+sims <- calculate(phenotype_resistant,
+                  n_positive,
+                  nsim = 1,
+                  values = list(p0 = 0.9))
+sims
+plot(sims$phenotype_resistant[1, ,1])
