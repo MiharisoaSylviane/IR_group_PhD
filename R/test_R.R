@@ -99,7 +99,7 @@ n_positive <- binomial(size = n_tested, prob = p_resist)
 # distribution(n_positive) <- binomial(size = n_tested, prob = p_resist)
 
 
-# observed_frequency <- n_positive / n_tested
+observed_frequency <- n_positive / n_tested
 sim<- calculate(p_resist, nsim=1)
 
 
@@ -122,25 +122,57 @@ points(sims$observed_frequency,
 
 # to calculate the phenotype, we will use the equilibrum Hardy-Weinberg equilibrium
 # Probability of an allele to occur
-phenotype <- zeros(time_series)
-ph_initial <- uniform(0,1)
-# phenotype <- as_data(rep(0, 10))
-phenotype [1] <- ph_initial
-for (t in 1:(time_series-1)) {
-  phenotype_resistant[t + 1] <- (p_resist[t] ^ 2) + (2 * p_susc[t] * p_resist[t])
-  
-}
+# phenotype <- zeros(time_series)
+# ph_initial <- uniform(0,1)
+# # phenotype <- as_data(rep(0, 10))
+# phenotype [1] <- ph_initial
+# for (t in 1:(time_series-1)) {
+#   phenotype[t + 1] <- (p_resist[t] ^ 2) + (2 * p_susc[t] * p_resist[t])
+#   
+# }
+# 
+# # simulate genotypic allele frequency data
+# n_tested <- rep(100, time_series)
+# n_positive <- binomial(size = n_tested, prob = phenotype)
+# 
+# 
+# # observed_frequency <- n_positive / n_tested
+# 
+# sims <- calculate(phenotype,
+#                   n_positive,
+#                   nsim = 1,
+#                   values = list(p0 = 0.9))
+# sims
+# plot(sims$phenotype[1, ,1])
 
-# simulate genotypic allele frequency data
-n_tested <- rep(100, time_series)
-n_positive <- binomial(size = n_tested, prob = phenotype_resistant)
+
+# sims <- calculate(p_resist,
+#                   n_resistant,
+#                   nsim = 1,
+#                   values = list(p0 = 0.9))
+# sims
+# 
+# 
+# n_resistant <- numeric(time_series)  # Vecteur pour stocker le nombre de moustiques résistants
 
 
-# observed_frequency <- n_positive / n_tested
-
-sims <- calculate(phenotype_resistant,
-                  n_positive,
-                  nsim = 1,
-                  values = list(p0 = 0.9))
+# determine the proportion of mosquitos resistant
+proportion_resistant <- n_positive/n_tested
+sims <- calculate(p_resist, 
+                  proportion_resistant, 
+                  nsim =1,
+                  values = list(p0=0.9))
 sims
-plot(sims$phenotype_resistant[1, ,1])
+
+#plotting
+plot(sims$proportion_resistant, 
+     type = "o", 
+     col = "blue", 
+     pch = 16)
+
+points(sims$p_resist,
+      type = "o", 
+      col = "red",
+      pch = c(16))
+
+
