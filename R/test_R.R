@@ -241,7 +241,68 @@ susceptible_phenotype_hom <- p_susc^2
 # the proportion of the phenotype with heterozygous allele
 resistant_phenotype_heter <- p_resist^2 
 
+# Cases when we have two alleles resistant in the population, homozygous allele and heterygous allele
+# we need to find the mean_fitness
+# degree of dominance h= 0 if resistant allele recessive
+# h= 0.5 if no dominance then additive
+# h = 1 if allele completely dominant
+library(tidyverse)
+h <- uniform(0,1)
 
+
+p <- function(p, s, h) {
+  q <- 1 - p
+  numerator <- p^2 * (1 + s) + p * q * (1 + h * s)
+  denominator <- 1 + s * (p^2 + 2 * h * p * q)
+  p_next <- numerator / denominator
+  return(p_next)
+}
+
+
+p_resist <- 1 - p_susc
+
+
+# simulate genotypic allele frequency data
+n_tested <- rep(100, time_series)
+n_positive <- binomial(size = n_tested, prob = p_resist)
+
+observed_frequency <- n_positive / n_tested
+sim<- calculate(p_resist,h, w, nsim=1)
+sim
+
+sims <- calculate(gammax, p_resist,
+                  n_positive,
+                  observed_frequency,
+                  nsim = 1,
+                  values = list(p0 = 0.9))
+
+plot(sims$p_resist[1, , 1],
+     ylim = c(0, 1),
+     type = "b")
+
+
+# the proportion of phenotype with homozygous allele
+# the phenotype resistant is expressed 
+resistant_phenotype_hom <- p_resist^2
+
+# the phenotype susceptible is expressed 
+susceptible_phenotype_hom <- p_susc^2
+
+# the proportion of the phenotype with heterozygous allele
+resistant_phenotype_heter <- 2*p_resist*p_susc 
+
+# here we got the proportion of resistant phenotype 
+proportion_resistant_phenotype <- resistant_phenotype_hom * 1 +
+  susceptible_phenotype_hom* 0 +
+  resistant_phenotype_heter * h
+
+
+sims <- calculate(proportion_resistant_phenotype, p_resist,
+                  n_positive,
+                  observed_frequency,
+                  nsim = 1,
+                  values = list(p0 = 0.9))
+sims
 
 # we consider we have two alleles resistant with the susceptible allele
 # (p+q+r)^2 =1
