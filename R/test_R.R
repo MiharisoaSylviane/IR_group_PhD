@@ -248,24 +248,13 @@ resistant_phenotype_heter <- p_resist^2
 # p represent the allele frequency of the first allele resistant R1
 # r represent the allele frequency of the second allele resistant R2 in the locus
 # q represent the allele frequency of the allele susceptible
-
-
-# we consider we have two alleles resistant with the susceptible allele
-# p+q+r2 =1
-# p represent the allele frequency of the first allele resistant R
-# r represent the allele frequency of the second allele resistant Q in the locus
-# q represent the allele frequency of the allele susceptible
-# for each, the selection and fitness is different
-# Assuming beta is a vector of coefficients for each allele's fitness
-
 # number of alleles 
 n_allele <- 3
 
 beta <- normal(0,1, dim = n_alleles)
-# replace with your actual beta values
 
 # calculate relative fitness for each allele
-gammax <- exp(beta)  # This will be a vector of length 4
+gammax <- exp(beta) 
 
 # ITN coverage covariates - assuming you have one for each allele
 itns_covariates <- c(0.1, 0.7, 0.5) 
@@ -295,7 +284,7 @@ p <- zeros(time_series)
 r <- zeros(time_series) 
 
 
-# Set first column to p0 (greta handles this as a graph operation)
+# Set first column to p0 
 p[1] <- p0
 r[1] <- p0
 
